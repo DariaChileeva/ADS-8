@@ -6,54 +6,38 @@ Train::Train() {
 }
 
 void Train::addCage(bool light) {
-    Cage* node = new Cage;
-    node->light = light;
+    Cage* newCage = new Cage;
+    newCage->light = light;
     if (first == nullptr) {
-        if (!first) {
-            node->light = light;
-            node->prev = node;
-            node->next = node;
-            first = node;
-            first->prev = node;
-            first->next = node;
-        } else {
-            node->prev = first;
-            node->next = first->next;
-            first->next->prev = node;
-            first->next = node;
-            Cage* First = first;
-            node->light = light;
-            node->next = first;
-            node->prev = first->prev;
-            first->prev->next = node;
-            first->prev = node;
-        }
+        first = newCage;
+        first->next = first;
+        first->prev = first;
+    } else {
+        newCage->next = first;
+        newCage->prev = first->prev;
+        first->prev->next = newCage;
+        first->prev = newCage;
     }
+}
 
-    int Train::getLength() {
-        Cage* current = first;
-        int length = 0;
-        while (current != nullptr) {
-            current = current->next;
-            length++;
-            first->light = true;
-            Cage *SecFirst = first;
-            int q = 1;
-            int carriages = 1;
-            while (first->light) {
-                carriages = 1;
-                SecFirst = first->next;
-                while (!SecFirst->light) {
-                    SecFirst = SecFirst->next;
-                    carriages += 1;
-                }
-                SecFirst->light = false;
-                countOp += carriages * 2;
-            }
-            return length;
-            return carriages;
+int Train::getLength() {
+    if (first == nullptr) return 0;
+    int length = 0;
+    first->light = true;
+    Cage* CurrentCage = first;
+    while (first->light) {
+        length = 1;
+        CurrentCage = first->next;
+        while (!CurrentCage->light) {
+            CurrentCage = CurrentCage->next;
+            length += 1;
         }
+        CurrentCage->light = false;
+        countOp += length * 2;
+    }
+    return length;
+}
 
-        int Train::getOpCount() {
-            return countOp;
-        }
+int Train::getOpCount() {
+    return countOp;
+}
